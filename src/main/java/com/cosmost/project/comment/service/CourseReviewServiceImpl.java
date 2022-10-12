@@ -6,6 +6,7 @@ import com.cosmost.project.comment.infrastructure.entity.CourseReviewStatus;
 import com.cosmost.project.comment.infrastructure.repository.CourseReviewEntityRepository;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
+import com.cosmost.project.comment.view.CourseReviewView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,16 @@ public class CourseReviewServiceImpl implements CourseReviewService {
         CourseReviewEntity courseReview = dtoToEntity(createCourseReviewRequest);
         courseReviewEntityRepository.save(courseReview);
         return courseReview.getCourseId();
+    }
+
+    @Override
+    public Optional<CourseReviewEntity> findById(Long id) {
+        return courseReviewEntityRepository.findById(id);
+    }
+
+    @Override
+    public CourseReviewView courseReviewFindById(FindCourseReviewQuery findCourseReviewQuery) {
+        return null;
     }
 
     @Override

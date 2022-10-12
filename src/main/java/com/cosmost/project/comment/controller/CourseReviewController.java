@@ -34,7 +34,7 @@ public class CourseReviewController {
     @ApiOperation(value = "코스 리뷰를 등록할 때 쓰는 메소드")
     @ApiImplicitParam(name = "course", value = "코스 리뷰를 등록한 메뉴", dataType = "CourseReviewVoReq")
     @PostMapping("/comments/course-reviews")
-    public ResponseEntity<String> createCourseReviews(@RequestBody CreateCourseReviewRequest createCourseReviewRequest) {
+    public ResponseEntity<String> createCourseReviews(@Valid @RequestBody CreateCourseReviewRequest createCourseReviewRequest) {
         courseReviewService.createCourseReviews(createCourseReviewRequest);
         return ResponseEntity.ok("리뷰가 등록되었습니다.");
     }

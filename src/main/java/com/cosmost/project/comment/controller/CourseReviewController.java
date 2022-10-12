@@ -1,6 +1,7 @@
 package com.cosmost.project.comment.controller;
 
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
+import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
 import com.cosmost.project.comment.service.CourseReviewService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
@@ -8,10 +9,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1")
@@ -37,5 +35,12 @@ public class CourseReviewController {
     public ResponseEntity<String> createCourseReviews(@RequestBody CreateCourseReviewRequest createCourseReviewRequest) {
         courseReviewService.createCourseReviews(createCourseReviewRequest);
         return ResponseEntity.ok("리뷰가 등록되었습니다.");
+    }
+
+    // 코스리뷰 수정
+    @PutMapping("/comments/{id}")
+    public ResponseEntity<String> updateCourseReviews(@PathVariable Long id, @RequestBody UpdateCourseReviewRequest request) {
+        courseReviewService.updateCourseReviews(id,request);
+        return ResponseEntity.ok("리뷰가 수정되었습니다.");
     }
 }

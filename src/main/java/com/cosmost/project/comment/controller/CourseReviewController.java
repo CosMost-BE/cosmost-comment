@@ -1,6 +1,9 @@
 package com.cosmost.project.comment.controller;
 
+import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
+import com.cosmost.project.comment.requestbody.FindCourseReviewIdQuery;
+import com.cosmost.project.comment.requestbody.FindCourseReviewQuery;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
 import com.cosmost.project.comment.service.CourseReviewService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -12,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1")
@@ -39,9 +44,26 @@ public class CourseReviewController {
         return ResponseEntity.ok("리뷰가 등록되었습니다.");
     }
 
+    // 코스리뷰 목록 조회(코스 상세페이지)
+    @GetMapping("/comments?filter=auth&type=review")
+    public ResponseEntity<List<CourseReviewEntity>> readAllCourseReviews(@RequestParam(value = "filter") String filter,
+                                                                         @RequestParam(value = "type") String type) {
+        FindCourseReviewIdQuery findCourseReviewIdQuery= new FindCourseReviewIdQuery();
+        Optional<CourseReviewEntity> id = courseReviewService.findById(findCourseReviewQuery.getId());
+
+        if(filter.equals("auth") && type.equals("review")) {
+            courseReviewService.
+        }
+
+
+
+        return courseReviewService.;
+    }
+
     // 코스리뷰 수정
     @PutMapping("/comments/{id}")
-    public ResponseEntity<String> updateCourseReviews(@PathVariable Long id, @Valid @RequestBody UpdateCourseReviewRequest request) {
+    public ResponseEntity<String> updateCourseReviews(@PathVariable Long id,
+                                                      @Valid @RequestBody UpdateCourseReviewRequest request) {
         courseReviewService.updateCourseReviews(id,request);
         return ResponseEntity.ok("리뷰가 수정되었습니다.");
     }

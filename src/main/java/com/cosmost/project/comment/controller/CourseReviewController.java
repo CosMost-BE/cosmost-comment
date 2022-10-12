@@ -1,7 +1,7 @@
-package com.cosmost.project.cosmostcomment.controller;
+package com.cosmost.project.comment.controller;
 
-import com.cosmost.project.cosmostcomment.requestbody.CreateCourseReviewRequest;
-import com.cosmost.project.cosmostcomment.service.CourseReviewService;
+import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
+import com.cosmost.project.comment.service.CourseReviewService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

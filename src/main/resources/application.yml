@@ -5,7 +5,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
   application:
-    name: board-service
+    name: comment-service
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher

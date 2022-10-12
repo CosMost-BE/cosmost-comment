@@ -1,4 +1,4 @@
-package com.cosmost.project.cosmostcomment.doc;
+package com.cosmost.project.comment.doc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

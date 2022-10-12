@@ -1,4 +1,4 @@
-package com.cosmost.project.cosmostcomment.view;
+package com.cosmost.project.comment.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

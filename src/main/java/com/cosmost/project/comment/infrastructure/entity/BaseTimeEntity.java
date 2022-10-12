@@ -1,4 +1,4 @@
-package com.cosmost.project.cosmostcomment.infrastructure.entity;
+package com.cosmost.project.comment.infrastructure.entity;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

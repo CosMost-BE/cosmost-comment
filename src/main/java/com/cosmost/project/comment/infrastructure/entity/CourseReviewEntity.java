@@ -1,4 +1,4 @@
-package com.cosmost.project.cosmostcomment.infrastructure.entity;
+package com.cosmost.project.comment.infrastructure.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

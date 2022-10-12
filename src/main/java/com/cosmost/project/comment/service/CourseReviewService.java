@@ -1,8 +1,8 @@
-package com.cosmost.project.cosmostcomment.service;
+package com.cosmost.project.comment.service;
 
-import com.cosmost.project.cosmostcomment.infrastructure.entity.CourseReviewEntity;
-import com.cosmost.project.cosmostcomment.infrastructure.entity.CourseReviewStatus;
-import com.cosmost.project.cosmostcomment.requestbody.CreateCourseReviewRequest;
+import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
+import com.cosmost.project.comment.infrastructure.entity.CourseReviewStatus;
+import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 
 public interface CourseReviewService {
 

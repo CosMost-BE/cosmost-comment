@@ -1,4 +1,4 @@
-package com.cosmost.project.cosmostcomment.configuration;
+package com.cosmost.project.comment.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

@@ -1,7 +1,7 @@
-package com.cosmost.project.cosmostcomment.view;
+package com.cosmost.project.comment.view;
 
-import com.cosmost.project.cosmostcomment.infrastructure.entity.CourseReviewStatus;
-import com.cosmost.project.cosmostcomment.model.CourseReview;
+import com.cosmost.project.comment.infrastructure.entity.CourseReviewStatus;
+import com.cosmost.project.comment.model.CourseReview;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.ToString;

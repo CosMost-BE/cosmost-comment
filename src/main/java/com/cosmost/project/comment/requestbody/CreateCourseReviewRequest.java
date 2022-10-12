@@ -1,6 +1,6 @@
-package com.cosmost.project.cosmostcomment.requestbody;
+package com.cosmost.project.comment.requestbody;
 
-import com.cosmost.project.cosmostcomment.infrastructure.entity.CourseReviewStatus;
+import com.cosmost.project.comment.infrastructure.entity.CourseReviewStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

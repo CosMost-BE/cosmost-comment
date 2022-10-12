@@ -35,6 +35,18 @@ public class CourseReviewServiceImpl implements CourseReviewService {
         courseReviewUpdate(id, updateCourseReviewRequest);
     }
 
+    @Override
+    public void deleteCourseReview(Long id) {
+
+        Optional<CourseReviewEntity> reviewerId =
+                Optional.ofNullable(courseReviewEntityRepository.findById(id)
+                        .orElseThrow(CourseReviewIdNotFoundException::new));
+
+        if(reviewerId.isPresent()){
+            courseReviewEntityRepository.deleteById(id);
+        }
+    }
+
     private CourseReviewEntity courseReviewUpdate(Long id, UpdateCourseReviewRequest updateCourseReviewRequest) {
         Optional<CourseReviewEntity> courseReview = Optional.ofNullable(courseReviewEntityRepository.findById(id)
                 .orElseThrow(CourseReviewIdNotFoundException::new));

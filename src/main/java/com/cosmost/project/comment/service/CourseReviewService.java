@@ -11,6 +11,7 @@ public interface CourseReviewService {
     Long createCourseReviews(CreateCourseReviewRequest createCourseReviewRequest);
 
     void updateCourseReviews(Long id, UpdateCourseReviewRequest updateCourseReviewRequest);
+    void deleteCourseReview(Long id);
 
     default CourseReviewEntity dtoToEntity(CreateCourseReviewRequest createCourseReviewRequest){
 

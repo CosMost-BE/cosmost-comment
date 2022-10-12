@@ -45,4 +45,10 @@ public class CourseReviewController {
         courseReviewService.updateCourseReviews(id,request);
         return ResponseEntity.ok("리뷰가 수정되었습니다.");
     }
+
+    @DeleteMapping("/comments/{id}/review")
+    public ResponseEntity<String>  deleteCourseReview(@PathVariable Long id){
+        courseReviewService.deleteCourseReview(id);
+        return ResponseEntity.ok("리뷰가 삭제되었습니다.");
+    }
 }

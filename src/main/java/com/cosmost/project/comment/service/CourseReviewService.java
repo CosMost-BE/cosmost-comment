@@ -4,12 +4,17 @@ import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
 import com.cosmost.project.comment.infrastructure.entity.CourseReviewStatus;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
+import com.cosmost.project.comment.view.CourseReviewView;
+
+import java.util.Optional;
 
 public interface CourseReviewService {
 
     // create, read, update, delete
     Long createCourseReviews(CreateCourseReviewRequest createCourseReviewRequest);
+    Optional<CourseReviewEntity> findById(Long id);
 
+    CourseReviewView courseReviewFindById(FindCourseReviewQuery findCourseReviewQuery);
     void updateCourseReviews(Long id, UpdateCourseReviewRequest updateCourseReviewRequest);
     void deleteCourseReview(Long id);
 

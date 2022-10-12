@@ -18,7 +18,7 @@ public class UpdateCourseReviewRequest {
 
     private Long id;
 
-    @Size(max = 100, message = "상품평은 ??자를 넘을 수 없습니다.")
+    @Size(max = 100, message = "상품평은 100자를 넘을 수 없습니다.")
     private String courseReviewContent;
 
     @Min(value = 1, message = "별점은 1이상 5이하여야 합니다.")

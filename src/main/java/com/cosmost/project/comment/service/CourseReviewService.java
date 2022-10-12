@@ -7,7 +7,7 @@ import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 public interface CourseReviewService {
 
     // create, read, update, delete
-    Long createCourseReviews(CreateCourseReviewRequest courseReviewRequest);
+    Long createCourseReviews(CreateCourseReviewRequest createCourseReviewRequest);
 
     default CourseReviewEntity dtoToEntity(CreateCourseReviewRequest createCourseReviewRequest){
 

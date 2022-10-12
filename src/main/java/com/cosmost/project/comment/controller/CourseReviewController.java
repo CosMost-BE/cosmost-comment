@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/v1")
 public class CourseReviewController {
@@ -39,7 +41,7 @@ public class CourseReviewController {
 
     // 코스리뷰 수정
     @PutMapping("/comments/{id}")
-    public ResponseEntity<String> updateCourseReviews(@PathVariable Long id, @RequestBody UpdateCourseReviewRequest request) {
+    public ResponseEntity<String> updateCourseReviews(@PathVariable Long id, @Valid @RequestBody UpdateCourseReviewRequest request) {
         courseReviewService.updateCourseReviews(id,request);
         return ResponseEntity.ok("리뷰가 수정되었습니다.");
     }

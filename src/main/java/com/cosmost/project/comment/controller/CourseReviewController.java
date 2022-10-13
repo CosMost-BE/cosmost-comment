@@ -1,11 +1,10 @@
 package com.cosmost.project.comment.controller;
 
-import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
+import com.cosmost.project.comment.exception.CourseParamNotFoundException;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
-import com.cosmost.project.comment.requestbody.FindCourseReviewIdQuery;
-import com.cosmost.project.comment.requestbody.FindCourseReviewQuery;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
 import com.cosmost.project.comment.service.CourseReviewService;
+import com.cosmost.project.comment.view.CourseReviewView;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -16,9 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/v1")
 public class CourseReviewController {
 
@@ -38,26 +37,21 @@ public class CourseReviewController {
     })
     @ApiOperation(value = "코스 리뷰를 등록할 때 쓰는 메소드")
     @ApiImplicitParam(name = "course", value = "코스 리뷰를 등록한 메뉴", dataType = "CourseReviewVoReq")
-    @PostMapping("/comments/course-reviews")
+    @PostMapping("/comments")
     public ResponseEntity<String> createCourseReviews(@Valid @RequestBody CreateCourseReviewRequest createCourseReviewRequest) {
         courseReviewService.createCourseReviews(createCourseReviewRequest);
         return ResponseEntity.ok("리뷰가 등록되었습니다.");
     }
 
-    // 코스리뷰 목록 조회(코스 상세페이지)
-    @GetMapping("/comments?filter=auth&type=review")
-    public ResponseEntity<List<CourseReviewEntity>> readAllCourseReviews(@RequestParam(value = "filter") String filter,
-                                                                         @RequestParam(value = "type") String type) {
-        FindCourseReviewIdQuery findCourseReviewIdQuery= new FindCourseReviewIdQuery();
-        Optional<CourseReviewEntity> id = courseReviewService.findById(findCourseReviewQuery.getId());
+    // 코스리뷰 목록 조회(마이페이지)
+    @GetMapping("/comments")
+    public ResponseEntity<List<CourseReviewView>> readMyCourseReviews(@RequestParam(value = "filter", required = false) String filter,
+                                                           @RequestParam(value = "type", required = false) String type) {
 
         if(filter.equals("auth") && type.equals("review")) {
-            courseReviewService.
+            return ResponseEntity.status(200).body(courseReviewService.readMyCourseReviews());
         }
-
-
-
-        return courseReviewService.;
+        throw new CourseParamNotFoundException();
     }
 
     // 코스리뷰 수정

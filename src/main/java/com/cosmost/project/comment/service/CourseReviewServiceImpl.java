@@ -10,7 +10,12 @@ import com.cosmost.project.comment.view.CourseReviewView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,14 +37,25 @@ public class CourseReviewServiceImpl implements CourseReviewService {
     }
 
     @Override
-    public Optional<CourseReviewEntity> findById(Long id) {
-        return courseReviewEntityRepository.findById(id);
+    public List<CourseReviewView> readMyCourseReviews() {
+
+        List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByReviewerId(getIdByHeader());
+        List<CourseReviewView> courseReviewViewList = new ArrayList<>();
+
+        reviewEntityList.forEach(courseReview -> {
+            courseReviewViewList.add(CourseReviewView.builder()
+                    .id(courseReview.getId())
+                    .courseId(courseReview.getCourseId())
+                    .courseReviewContent(courseReview.getCourseReviewContent())
+                    .courseReviewStatus(courseReview.getCourseReviewStatus())
+                    .reviewerId(courseReview.getReviewerId())
+                    .rate(courseReview.getRate())
+                    .build());
+        });
+
+        return courseReviewViewList;
     }
 
-    @Override
-    public CourseReviewView courseReviewFindById(FindCourseReviewQuery findCourseReviewQuery) {
-        return null;
-    }
 
     @Override
     public void updateCourseReviews(Long id, UpdateCourseReviewRequest updateCourseReviewRequest) {
@@ -73,5 +89,12 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                     .build());
         }
         return null;
+    }
+
+    private Long getIdByHeader() {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        Long id = Long.parseLong(request.getHeader("Authorization"));
+        return id;
     }
 }

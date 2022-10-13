@@ -17,6 +17,7 @@ import javax.validation.constraints.Size;
 public class UpdateCourseReviewRequest {
 
     private Long id;
+    private Long courseId;
 
     @Size(max = 100, message = "상품평은 100자를 넘을 수 없습니다.")
     private String courseReviewContent;

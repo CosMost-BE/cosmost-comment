@@ -3,6 +3,7 @@ package com.cosmost.project.comment.service;
 import com.cosmost.project.comment.exception.CourseReviewIdNotFoundException;
 import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
 import com.cosmost.project.comment.infrastructure.repository.CourseReviewEntityRepository;
+import com.cosmost.project.comment.model.CourseReview;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
 import com.cosmost.project.comment.view.CourseReviewView;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -53,6 +55,29 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                     .build());
         });
 
+        reviewEntityList.stream().map(s ->
+                new CourseReview(s)).collect(Collectors.toList());
+
+        return courseReviewViewList;
+    }
+
+    @Override
+    public List<CourseReviewView> readCourseDetailReviews() {
+
+        List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByCourseId(getIdByHeader());
+        List<CourseReviewView> courseReviewViewList = new ArrayList<>();
+
+        reviewEntityList.forEach(courseReview -> {
+            courseReviewViewList.add(CourseReviewView.builder()
+                    .id(courseReview.getId())
+                    .courseId(courseReview.getCourseId())
+                    .courseReviewContent(courseReview.getCourseReviewContent())
+                    .courseReviewStatus(courseReview.getCourseReviewStatus())
+                    .reviewerId(courseReview.getReviewerId())
+                    .createdAt(courseReview.getCreatedAt())
+                    .rate(courseReview.getRate())
+                    .build());
+        });
         return courseReviewViewList;
     }
 

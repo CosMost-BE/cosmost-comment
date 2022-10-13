@@ -33,6 +33,6 @@ public class CourseReviewEntity extends BaseTimeEntity{
     private CourseReviewStatus courseReviewStatus;
 
     @NotNull
-    private Float rate;
+    private Integer rate;
 
 }

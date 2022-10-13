@@ -1,8 +1,10 @@
 package com.cosmost.project.comment.controller;
 
+import com.cosmost.project.comment.exception.CourseParamNotFoundException;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
 import com.cosmost.project.comment.service.CourseReviewService;
+import com.cosmost.project.comment.view.CourseReviewView;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -12,8 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping("/v1")
 public class CourseReviewController {
 
@@ -33,15 +37,27 @@ public class CourseReviewController {
     })
     @ApiOperation(value = "코스 리뷰를 등록할 때 쓰는 메소드")
     @ApiImplicitParam(name = "course", value = "코스 리뷰를 등록한 메뉴", dataType = "CourseReviewVoReq")
-    @PostMapping("/comments/course-reviews")
+    @PostMapping("/comments")
     public ResponseEntity<String> createCourseReviews(@Valid @RequestBody CreateCourseReviewRequest createCourseReviewRequest) {
         courseReviewService.createCourseReviews(createCourseReviewRequest);
         return ResponseEntity.ok("리뷰가 등록되었습니다.");
     }
 
+    // 코스리뷰 목록 조회(마이페이지)
+    @GetMapping("/comments")
+    public ResponseEntity<List<CourseReviewView>> readMyCourseReviews(@RequestParam(value = "filter", required = false) String filter,
+                                                           @RequestParam(value = "type", required = false) String type) {
+
+        if(filter.equals("auth") && type.equals("review")) {
+            return ResponseEntity.status(200).body(courseReviewService.readMyCourseReviews());
+        }
+        throw new CourseParamNotFoundException();
+    }
+
     // 코스리뷰 수정
     @PutMapping("/comments/{id}")
-    public ResponseEntity<String> updateCourseReviews(@PathVariable Long id, @Valid @RequestBody UpdateCourseReviewRequest request) {
+    public ResponseEntity<String> updateCourseReviews(@PathVariable Long id,
+                                                      @Valid @RequestBody UpdateCourseReviewRequest request) {
         courseReviewService.updateCourseReviews(id,request);
         return ResponseEntity.ok("리뷰가 수정되었습니다.");
     }

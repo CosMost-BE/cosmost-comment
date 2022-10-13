@@ -29,6 +29,6 @@ public class CreateCourseReviewRequest {
     @Min(value = 1, message = "별점은 1이상 5이하여야 합니다.")
     @Max(value = 5, message = "별점은 1이상 5이하여야 합니다.")
     @NotNull
-    private float rate;
+    private Integer rate;
 
 }

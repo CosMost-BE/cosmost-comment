@@ -2,7 +2,6 @@ package com.cosmost.project.comment.service;
 
 import com.cosmost.project.comment.exception.CourseReviewIdNotFoundException;
 import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
-import com.cosmost.project.comment.infrastructure.entity.CourseReviewStatus;
 import com.cosmost.project.comment.infrastructure.repository.CourseReviewEntityRepository;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
@@ -49,6 +48,7 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                     .courseReviewContent(courseReview.getCourseReviewContent())
                     .courseReviewStatus(courseReview.getCourseReviewStatus())
                     .reviewerId(courseReview.getReviewerId())
+                    .createdAt(courseReview.getCreatedAt())
                     .rate(courseReview.getRate())
                     .build());
         });
@@ -84,7 +84,6 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                     .courseId(updateCourseReviewRequest.getCourseId())
                     .reviewerId(courseReview.get().getReviewerId())
                     .courseReviewContent(updateCourseReviewRequest.getCourseReviewContent())
-                    .courseReviewStatus(CourseReviewStatus.ACTIVE)
                     .rate(updateCourseReviewRequest.getRate())
                     .build());
         }

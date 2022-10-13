@@ -81,7 +81,7 @@ public class CourseReviewServiceImpl implements CourseReviewService {
         if (courseReview.isPresent()) {
             return courseReviewEntityRepository.save(CourseReviewEntity.builder()
                     .id(id)
-                    .courseId(courseReview.get().getCourseId())
+                    .courseId(updateCourseReviewRequest.getCourseId())
                     .reviewerId(courseReview.get().getReviewerId())
                     .courseReviewContent(updateCourseReviewRequest.getCourseReviewContent())
                     .courseReviewStatus(CourseReviewStatus.ACTIVE)

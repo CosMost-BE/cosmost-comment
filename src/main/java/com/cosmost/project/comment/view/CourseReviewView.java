@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.LocalDate;
+
 @Getter
 @ToString
 @Builder
@@ -13,6 +15,7 @@ import lombok.ToString;
 public class CourseReviewView {
 
     private final Long id;
+    private final LocalDate createdAt;
     private final Long courseId;
     private final Long reviewerId;
     private final CourseReviewStatus courseReviewStatus;

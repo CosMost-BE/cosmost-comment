@@ -13,8 +13,8 @@ public interface CourseReviewService {
 
     // create, read, update, delete
     Long createCourseReviews(CreateCourseReviewRequest createCourseReviewRequest);
-    List<CourseReviewView> readMyCourseReviews();
-    List<CourseReviewView> readCourseDetailReviews();
+    List<CourseReview> readMyCourseReviews();
+    List<CourseReview> readCourseDetailReviews();
     void updateCourseReviews(Long id, UpdateCourseReviewRequest updateCourseReviewRequest);
     void deleteCourseReview(Long id);
 

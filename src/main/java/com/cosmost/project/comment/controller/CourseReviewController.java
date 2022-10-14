@@ -46,7 +46,7 @@ public class CourseReviewController {
     // 코스리뷰 목록 조회(마이페이지)
     // 코스리뷰 상세페이지 조회
     @GetMapping("")
-    public ResponseEntity<List<CourseReviewView>> readMyCourseReviews(@RequestParam(value = "filter", required = false) String filter,
+    public ResponseEntity<List<CourseReviewView>> readCourseReviews(@RequestParam(value = "filter", required = false) String filter,
                                                            @RequestParam(value = "type", required = false) String type) {
 
         if(String.valueOf(filter).equals("auth") && type.equals("review")) {

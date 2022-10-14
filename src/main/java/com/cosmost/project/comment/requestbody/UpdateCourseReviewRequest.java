@@ -17,6 +17,7 @@ import javax.validation.constraints.Size;
 public class UpdateCourseReviewRequest {
 
     private Long id;
+    private Long courseId;
 
     @Size(max = 100, message = "상품평은 100자를 넘을 수 없습니다.")
     private String courseReviewContent;
@@ -24,6 +25,6 @@ public class UpdateCourseReviewRequest {
     @Min(value = 1, message = "별점은 1이상 5이하여야 합니다.")
     @Max(value = 5, message = "별점은 1이상 5이하여야 합니다.")
     @NotNull
-    private float rate;
+    private Integer rate;
 
 }

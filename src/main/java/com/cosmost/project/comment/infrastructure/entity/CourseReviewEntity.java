@@ -1,5 +1,6 @@
 package com.cosmost.project.comment.infrastructure.entity;
 
+import com.cosmost.project.comment.model.CourseReview;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,9 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Getter
 @Table(name = "course_review")
 public class CourseReviewEntity extends BaseTimeEntity{
@@ -34,5 +33,26 @@ public class CourseReviewEntity extends BaseTimeEntity{
 
     @NotNull
     private Integer rate;
+
+    @Builder
+    public CourseReviewEntity(Long id, Long courseId, Long reviewerId,
+                              String courseReviewContent, CourseReviewStatus courseReviewStatus,
+                              Integer rate) {
+        this.id = id;
+        this.courseId = courseId;
+        this.reviewerId = reviewerId;
+        this.courseReviewContent = courseReviewContent;
+        this.courseReviewStatus = courseReviewStatus;
+        this.rate = rate;
+    }
+
+    public CourseReviewEntity(CourseReview courseReview) {
+        this.id = courseReview.getId();
+        this.courseId = courseReview.getCourseId();
+        this.reviewerId = courseReview.getReviewerId();
+        this.courseReviewContent = courseReview.getCourseReviewContent();
+        this.courseReviewStatus = courseReview.getCourseReviewStatus();
+        this.rate = courseReview.getRate();
+    }
 
 }

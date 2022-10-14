@@ -1,6 +1,7 @@
 package com.cosmost.project.comment.controller;
 
 import com.cosmost.project.comment.exception.CourseParamNotFoundException;
+import com.cosmost.project.comment.model.CourseReview;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
 import com.cosmost.project.comment.service.CourseReviewService;
@@ -46,8 +47,8 @@ public class CourseReviewController {
     // 코스리뷰 목록 조회(마이페이지)
     // 코스리뷰 상세페이지 조회
     @GetMapping("")
-    public ResponseEntity<List<CourseReviewView>> readCourseReviews(@RequestParam(value = "filter", required = false) String filter,
-                                                           @RequestParam(value = "type", required = false) String type) {
+    public ResponseEntity<List<CourseReview>> readCourseReviews(@RequestParam(value = "filter", required = false) String filter,
+                                                                @RequestParam(value = "type", required = false) String type) {
 
         if(String.valueOf(filter).equals("auth") && type.equals("review")) {
             return ResponseEntity.status(200).body(courseReviewService.readMyCourseReviews());

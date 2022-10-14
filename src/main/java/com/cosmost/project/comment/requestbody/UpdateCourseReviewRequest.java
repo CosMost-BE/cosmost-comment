@@ -15,7 +15,6 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 public class UpdateCourseReviewRequest {
-
     private Long id;
     private Long courseId;
 

@@ -6,7 +6,6 @@ import com.cosmost.project.comment.infrastructure.repository.CourseReviewEntityR
 import com.cosmost.project.comment.model.CourseReview;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
-import com.cosmost.project.comment.view.CourseReviewView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,49 +36,28 @@ public class CourseReviewServiceImpl implements CourseReviewService {
     }
 
     @Override
-    public List<CourseReviewView> readMyCourseReviews() {
+    public List<CourseReview> readMyCourseReviews() {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        Long id = Long.parseLong(request.getHeader("Authorization"));
 
-        List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByReviewerId(getIdByHeader());
-        List<CourseReviewView> courseReviewViewList = new ArrayList<>();
+        List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByReviewerId(id);
 
-        reviewEntityList.forEach(courseReview -> {
-            courseReviewViewList.add(CourseReviewView.builder()
-                    .id(courseReview.getId())
-                    .courseId(courseReview.getCourseId())
-                    .courseReviewContent(courseReview.getCourseReviewContent())
-                    .courseReviewStatus(courseReview.getCourseReviewStatus())
-                    .reviewerId(courseReview.getReviewerId())
-                    .createdAt(courseReview.getCreatedAt())
-                    .rate(courseReview.getRate())
-                    .build());
-        });
-
-        reviewEntityList.stream().map(s ->
-                new CourseReview(s)).collect(Collectors.toList());
-
-        return courseReviewViewList;
+        return reviewEntityList.stream().map(courseReview ->
+                new CourseReview(courseReview)).collect(Collectors.toList());
     }
 
     @Override
-    public List<CourseReviewView> readCourseDetailReviews() {
+    public List<CourseReview> readCourseDetailReviews() {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        Long id = Long.parseLong(request.getHeader("Authorization"));
 
-        List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByCourseId(getIdByHeader());
-        List<CourseReviewView> courseReviewViewList = new ArrayList<>();
 
-        reviewEntityList.forEach(courseReview -> {
-            courseReviewViewList.add(CourseReviewView.builder()
-                    .id(courseReview.getId())
-                    .courseId(courseReview.getCourseId())
-                    .courseReviewContent(courseReview.getCourseReviewContent())
-                    .courseReviewStatus(courseReview.getCourseReviewStatus())
-                    .reviewerId(courseReview.getReviewerId())
-                    .createdAt(courseReview.getCreatedAt())
-                    .rate(courseReview.getRate())
-                    .build());
-        });
-        return courseReviewViewList;
+        List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByCourseId(id);
+        return reviewEntityList.stream().map(courseReview ->
+                new CourseReview(courseReview)).collect(Collectors.toList());
     }
-
 
     @Override
     public void updateCourseReviews(Long id, UpdateCourseReviewRequest updateCourseReviewRequest) {
@@ -113,12 +90,5 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                     .build());
         }
         return null;
-    }
-
-    private Long getIdByHeader() {
-        HttpServletRequest request = ((ServletRequestAttributes)
-                RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long id = Long.parseLong(request.getHeader("Authorization"));
-        return id;
     }
 }

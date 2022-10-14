@@ -1,11 +1,10 @@
 package com.cosmost.project.comment.model;
 
+import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
 import com.cosmost.project.comment.infrastructure.entity.CourseReviewStatus;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-@Builder
 @Getter
 @ToString
 public class CourseReview {
@@ -20,6 +19,15 @@ public class CourseReview {
 
     private CourseReviewStatus courseReviewStatus;
 
-    private Float rate;
+    private Integer rate;
+
+    public CourseReview(CourseReviewEntity entity) {
+        this.id = entity.getId();
+        this.courseId = entity.getCourseId();
+        this.reviewerId = entity.getReviewerId();
+        this.courseReviewContent = entity.getCourseReviewContent();
+        this.courseReviewStatus = entity.getCourseReviewStatus();
+        this.rate = entity.getRate();
+    }
 
 }

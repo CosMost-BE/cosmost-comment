@@ -45,14 +45,4 @@ public class CourseReviewEntity extends BaseTimeEntity{
         this.courseReviewStatus = courseReviewStatus;
         this.rate = rate;
     }
-
-    public CourseReviewEntity(CourseReview courseReview) {
-        this.id = courseReview.getId();
-        this.courseId = courseReview.getCourseId();
-        this.reviewerId = courseReview.getReviewerId();
-        this.courseReviewContent = courseReview.getCourseReviewContent();
-        this.courseReviewStatus = courseReview.getCourseReviewStatus();
-        this.rate = courseReview.getRate();
-    }
-
 }

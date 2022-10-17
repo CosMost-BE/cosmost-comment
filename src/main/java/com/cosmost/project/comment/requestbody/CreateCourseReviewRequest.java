@@ -28,7 +28,16 @@ public class CreateCourseReviewRequest {
 
     @Min(value = 1, message = "별점은 1이상 5이하여야 합니다.")
     @Max(value = 5, message = "별점은 1이상 5이하여야 합니다.")
-    @NotNull
     private Integer rate;
+
+    @Size(max = 50, message = "상품평은 50자를 넘을 수 없습니다.")
+    private String reportTitle;
+
+    @Size(max = 300, message = "상품평은 300자를 넘을 수 없습니다.")
+    private String reportContent;
+    private Long reportId;
+    private Long answerPersonId;
+
+    private String type;
 
 }

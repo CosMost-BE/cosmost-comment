@@ -5,7 +5,7 @@ import com.cosmost.project.comment.model.CourseReview;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
 import com.cosmost.project.comment.service.CourseReviewService;
-import com.cosmost.project.comment.view.CourseReviewView;
+import com.cosmost.project.comment.service.ReportAnswerService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -23,10 +23,14 @@ import java.util.List;
 public class CourseReviewController {
 
     private final CourseReviewService courseReviewService;
+    private final ReportAnswerService reportAnswerService;
+
 
     @Autowired
-    public CourseReviewController(CourseReviewService courseReviewService) {
+    public CourseReviewController(CourseReviewService courseReviewService,
+                                  ReportAnswerService reportAnswerService) {
         this.courseReviewService = courseReviewService;
+        this.reportAnswerService = reportAnswerService;
     }
 
     // 코스리뷰 등록
@@ -40,9 +44,17 @@ public class CourseReviewController {
     @ApiImplicitParam(name = "course", value = "코스 리뷰를 등록한 메뉴", dataType = "CourseReviewVoReq")
     @PostMapping("")
     public ResponseEntity<String> createCourseReviews(@Valid @RequestBody CreateCourseReviewRequest createCourseReviewRequest) {
-        courseReviewService.createCourseReviews(createCourseReviewRequest);
-        return ResponseEntity.ok("리뷰가 등록되었습니다.");
+
+        if(createCourseReviewRequest.getType().equals("courseReview")){
+            courseReviewService.createCourseReviews(createCourseReviewRequest);
+            return ResponseEntity.ok("리뷰가 등록되었습니다.");
+        } else if(createCourseReviewRequest.getType().equals("reportAnswer")){
+            reportAnswerService.createReportAnswers(createCourseReviewRequest);
+            return ResponseEntity.ok("신고답변이 등록되었습니다.");
+        }
+        return null;
     }
+
 
     // 코스리뷰 목록 조회(마이페이지)
     // 코스리뷰 상세페이지 조회

@@ -5,6 +5,8 @@ import com.cosmost.project.comment.infrastructure.entity.CourseReviewStatus;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.LocalDate;
+
 @Getter
 @ToString
 public class CourseReview {
@@ -14,7 +16,7 @@ public class CourseReview {
     private Long courseId;
 
     private Long reviewerId;
-
+    private LocalDate createdAt;
     private String courseReviewContent;
 
     private CourseReviewStatus courseReviewStatus;
@@ -23,6 +25,7 @@ public class CourseReview {
 
     public CourseReview(CourseReviewEntity entity) {
         this.id = entity.getId();
+        this.createdAt = entity.getCreatedAt();
         this.courseId = entity.getCourseId();
         this.reviewerId = entity.getReviewerId();
         this.courseReviewContent = entity.getCourseReviewContent();

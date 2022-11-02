@@ -51,14 +51,12 @@ public class CourseReviewServiceImpl implements CourseReviewService {
 
     @Override
     public List<CourseDetailReviewView> readCourseDetailReviews() {
-        int totalRate = 0;
         int totalPerson;
-        double avg = 0;
-        float rateOneCnt = 0;
-        float rateTwoCnt = 0;
-        float rateThreeCnt = 0;
-        float rateFourCnt = 0;
-        float rateFiveCnt = 0;
+        double rateOneCnt = 0;
+        double rateTwoCnt = 0;
+        double rateThreeCnt = 0;
+        double rateFourCnt = 0;
+        double rateFiveCnt = 0;
 
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -67,48 +65,44 @@ public class CourseReviewServiceImpl implements CourseReviewService {
         // 코스 아이디를 입력 받아서 찾는다.
         List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByCourseId(courseId);
         List<CourseDetailReviewView> readPlaceDetailResponseList = new ArrayList<>();
-
         List<CourseReviewEntity> courseReviewEntityList = courseReviewEntityRepository.findByCourseId(courseId);
 
         float[] rateAllTypeList = new float[5];
 
         courseReviewEntityList.stream().map(courseReviewEntity ->
-            new CourseReview(courseReviewEntity)).collect(Collectors.toList()
-           );
+                new CourseReview(courseReviewEntity)).collect(Collectors.toList()
+        );
 
         for (int i = 0; i < courseReviewEntityList.size(); i++) {
-            totalRate += courseReviewEntityList.get(i).getRate();
             totalPerson = courseReviewEntityList.size();
-
-            avg = ((totalRate / totalPerson)*10) / 10.0;
 
             if (courseReviewEntityList.get(i).getRate() == 1) {
                 rateOneCnt++;
                 rateAllTypeList[0] = 0;
-                rateAllTypeList[0] += (Math.floor((rateOneCnt / totalPerson)*100)) / 1.0;
+                rateAllTypeList[0] += (Math.round((rateOneCnt / totalPerson) * 100)) / 1.0;
             } else if (courseReviewEntityList.get(i).getRate() == 2) {
                 rateTwoCnt++;
                 rateAllTypeList[1] = 0;
-                rateAllTypeList[1] += (Math.floor((rateTwoCnt / totalPerson)*100)) / 1.0;
+                rateAllTypeList[1] += (Math.round((rateTwoCnt / totalPerson) * 100)) / 1.0;
             } else if (courseReviewEntityList.get(i).getRate() == 3) {
                 rateThreeCnt++;
                 rateAllTypeList[2] = 0;
-                rateAllTypeList[2] += (Math.floor((rateThreeCnt / totalPerson)*100)) / 1.0;
+                rateAllTypeList[2] += (Math.round((rateThreeCnt / totalPerson) * 100)) / 1.0;
             } else if (courseReviewEntityList.get(i).getRate() == 4) {
                 rateFourCnt++;
                 rateAllTypeList[3] = 0;
-                rateAllTypeList[3] += (Math.floor((rateFourCnt / totalPerson)*100)) / 1.0;
+                rateAllTypeList[3] += (Math.round((rateFourCnt / totalPerson) * 100)) / 1.0;
             } else {
                 rateFiveCnt++;
                 rateAllTypeList[4] = 0;
-                rateAllTypeList[4] += (Math.floor((rateFiveCnt / totalPerson)*100)) / 1.0;
+                rateAllTypeList[4] += (Math.round((rateFiveCnt / totalPerson) * 100)) / 1.0;
             }
         }
 
         readPlaceDetailResponseList.add(
                 CourseDetailReviewView.builder()
                         .courseId(reviewEntityList.get(0).getCourseId())
-                        .rate(avg)
+                        .courseReviewCnt((long) courseReviewEntityList.size())
                         .rateAllTypeList(new String[]{Arrays.toString(rateAllTypeList)})
                         .courseReviewList(courseReviewEntityList)
                         .build());

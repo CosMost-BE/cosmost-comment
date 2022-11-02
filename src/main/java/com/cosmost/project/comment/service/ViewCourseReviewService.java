@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface ViewCourseReviewService {
 
-    List<ViewCourseRate> readCourseAvg(Long courseId);
+    List<ViewCourseRate> readCourseAvg(Long course);
 }

@@ -12,6 +12,5 @@ public interface CourseReviewEntityRepository extends JpaRepository<CourseReview
 
     List<CourseReviewEntity> findAllByReviewerId(Long reviewerId);
     List<CourseReviewEntity> findAllByCourseId(Long courseId);
-
-
+    List<CourseReviewEntity> findByCourseId(Long cousreId);
 }

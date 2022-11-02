@@ -6,6 +6,8 @@ import com.cosmost.project.comment.infrastructure.repository.CourseReviewEntityR
 import com.cosmost.project.comment.model.CourseReview;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
+import com.cosmost.project.comment.view.CourseDetailReviewView;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,12 +15,12 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@ToString
 public class CourseReviewServiceImpl implements CourseReviewService {
 
     private final CourseReviewEntityRepository courseReviewEntityRepository;
@@ -48,15 +50,64 @@ public class CourseReviewServiceImpl implements CourseReviewService {
     }
 
     @Override
-    public List<CourseReview> readCourseDetailReviews() {
+    public List<CourseDetailReviewView> readCourseDetailReviews() {
+        int totalPerson;
+        double rateOneCnt = 0;
+        double rateTwoCnt = 0;
+        double rateThreeCnt = 0;
+        double rateFourCnt = 0;
+        double rateFiveCnt = 0;
+
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long id = Long.parseLong(request.getHeader("Authorization"));
+        Long courseId = Long.parseLong(request.getHeader("Authorization")); // 코스 아이디가 들어 옴.
 
+        // 코스 아이디를 입력 받아서 찾는다.
+        List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByCourseId(courseId);
+        List<CourseDetailReviewView> readPlaceDetailResponseList = new ArrayList<>();
+        List<CourseReviewEntity> courseReviewEntityList = courseReviewEntityRepository.findByCourseId(courseId);
 
-        List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByCourseId(id);
-        return reviewEntityList.stream().map(courseReview ->
-                new CourseReview(courseReview)).collect(Collectors.toList());
+        float[] rateAllTypeList = new float[5];
+
+        courseReviewEntityList.stream().map(courseReviewEntity ->
+                new CourseReview(courseReviewEntity)).collect(Collectors.toList()
+        );
+
+        for (int i = 0; i < courseReviewEntityList.size(); i++) {
+            totalPerson = courseReviewEntityList.size();
+
+            if (courseReviewEntityList.get(i).getRate() == 1) {
+                rateOneCnt++;
+                rateAllTypeList[0] = 0;
+                rateAllTypeList[0] += (Math.round((rateOneCnt / totalPerson) * 100)) / 1.0;
+            } else if (courseReviewEntityList.get(i).getRate() == 2) {
+                rateTwoCnt++;
+                rateAllTypeList[1] = 0;
+                rateAllTypeList[1] += (Math.round((rateTwoCnt / totalPerson) * 100)) / 1.0;
+            } else if (courseReviewEntityList.get(i).getRate() == 3) {
+                rateThreeCnt++;
+                rateAllTypeList[2] = 0;
+                rateAllTypeList[2] += (Math.round((rateThreeCnt / totalPerson) * 100)) / 1.0;
+            } else if (courseReviewEntityList.get(i).getRate() == 4) {
+                rateFourCnt++;
+                rateAllTypeList[3] = 0;
+                rateAllTypeList[3] += (Math.round((rateFourCnt / totalPerson) * 100)) / 1.0;
+            } else {
+                rateFiveCnt++;
+                rateAllTypeList[4] = 0;
+                rateAllTypeList[4] += (Math.round((rateFiveCnt / totalPerson) * 100)) / 1.0;
+            }
+        }
+
+        readPlaceDetailResponseList.add(
+                CourseDetailReviewView.builder()
+                        .courseId(reviewEntityList.get(0).getCourseId())
+                        .courseReviewCnt((long) courseReviewEntityList.size())
+                        .rateAllTypeList(new String[]{Arrays.toString(rateAllTypeList)})
+                        .courseReviewList(courseReviewEntityList)
+                        .build());
+
+        return readPlaceDetailResponseList;
     }
 
     @Override
@@ -71,7 +122,7 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                 Optional.ofNullable(courseReviewEntityRepository.findById(id)
                         .orElseThrow(CourseReviewIdNotFoundException::new));
 
-        if(reviewerId.isPresent()){
+        if (reviewerId.isPresent()) {
             courseReviewEntityRepository.deleteById(id);
         }
     }

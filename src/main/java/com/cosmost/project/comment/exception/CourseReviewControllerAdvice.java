@@ -32,6 +32,11 @@ public class CourseReviewControllerAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
+    @ExceptionHandler(CourseNotFoundException.class)
+    public ResponseEntity<String> CourseNotFoundException(CourseNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
 
 
 }

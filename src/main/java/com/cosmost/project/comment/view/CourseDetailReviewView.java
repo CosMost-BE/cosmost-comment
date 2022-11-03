@@ -4,7 +4,6 @@ import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,7 +16,7 @@ public class CourseDetailReviewView {
     private Long courseId;
     private Long courseReviewCnt;
 
-    String[] rateAllTypeList;
+    float[] rateAllTypeList;
     List<CourseReviewEntity> courseReviewList;
 
 }

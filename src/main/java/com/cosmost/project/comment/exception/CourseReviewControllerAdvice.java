@@ -37,6 +37,11 @@ public class CourseReviewControllerAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
+    @ExceptionHandler(WriteReviewNotFoundException.class)
+    public ResponseEntity<String> WriteReviewNotFoundException(WriteReviewNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
 
 
 }

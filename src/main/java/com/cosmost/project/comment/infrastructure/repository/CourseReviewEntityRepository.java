@@ -24,5 +24,5 @@ public interface CourseReviewEntityRepository extends JpaRepository<CourseReview
 
     @Query(value = "select avg(c.rate) from CourseReviewEntity c " +
             "group by c.courseId order by avg(c.rate) desc")
-    List<Float> CourseAverageRate();
+    List<Float> CourseAverageRate(Pageable pageable);
 }

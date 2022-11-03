@@ -12,22 +12,10 @@ import java.util.List;
 public interface CourseReviewService {
 
     // create, read, update, delete
-    Long createCourseReviews(CreateCourseReviewRequest createCourseReviewRequest);
+    CourseReview createCourseReviews(CreateCourseReviewRequest createCourseReviewRequest);
     List<CourseReview> readMyCourseReviews();
     List<CourseDetailReviewView> readCourseDetailReviews();
     void updateCourseReviews(Long id, UpdateCourseReviewRequest updateCourseReviewRequest);
     void deleteCourseReview(Long id);
 
-    default CourseReviewEntity dtoToEntity(CreateCourseReviewRequest createCourseReviewRequest){
-
-        CourseReviewEntity courseReview = CourseReviewEntity.builder()
-            .courseId(createCourseReviewRequest.getCourseId())
-            .reviewerId(createCourseReviewRequest.getReviewerId())
-            .courseReviewContent(createCourseReviewRequest.getCourseReviewContent())
-            .rate(createCourseReviewRequest.getRate())
-            .courseReviewStatus(CourseReviewStatus.ACTIVE)
-            .build();
-
-        return courseReview;
-    }
 }

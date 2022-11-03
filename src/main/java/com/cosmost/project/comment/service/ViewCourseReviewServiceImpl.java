@@ -1,5 +1,6 @@
 package com.cosmost.project.comment.service;
 
+import com.cosmost.project.comment.exception.CourseNotFoundException;
 import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
 import com.cosmost.project.comment.infrastructure.repository.CourseReviewEntityRepository;
 import com.cosmost.project.comment.model.CourseReview;
@@ -46,15 +47,19 @@ public class ViewCourseReviewServiceImpl implements ViewCourseReviewService {
             totalRate += courseReviewEntityList.get(i).getRate();
             totalPerson = courseReviewEntityList.size();
 
-            avg = (float) (Math.round((totalRate / totalPerson)*10) / 10.0);
+            avg = (float) (Math.floor((totalRate / totalPerson)*10) / 10.0);
 
         }
 
-        readViewCourseRate.add(ViewCourseRate.builder()
-                        .courseId(reviewEntityList.get(0).getCourseId())
-                        .CourseAvgRate(avg)
-                        .build());
-        return readViewCourseRate;
+        try {
+            readViewCourseRate.add(ViewCourseRate.builder()
+                    .courseId(reviewEntityList.get(0).getCourseId())
+                    .CourseAvgRate(avg)
+                    .build());
+            return readViewCourseRate;
+        } catch (Exception e) {
+            throw new CourseNotFoundException();
+        }
     }
 
     @Override
@@ -74,5 +79,4 @@ public class ViewCourseReviewServiceImpl implements ViewCourseReviewService {
 
         return courseAverageRateList;
     }
-
 }

@@ -1,27 +1,38 @@
 package com.cosmost.project.comment.service;
 
+import com.cosmost.project.comment.exception.CourseNotFoundException;
 import com.cosmost.project.comment.exception.CourseReviewIdNotFoundException;
+import com.cosmost.project.comment.exception.WriteReviewNotFoundException;
 import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
+import com.cosmost.project.comment.infrastructure.entity.CourseReviewStatus;
 import com.cosmost.project.comment.infrastructure.repository.CourseReviewEntityRepository;
 import com.cosmost.project.comment.model.CourseReview;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
 import com.cosmost.project.comment.view.CourseDetailReviewView;
+import io.jsonwebtoken.Jwts;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @ToString
 public class CourseReviewServiceImpl implements CourseReviewService {
+
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     private final CourseReviewEntityRepository courseReviewEntityRepository;
 
@@ -30,27 +41,55 @@ public class CourseReviewServiceImpl implements CourseReviewService {
         this.courseReviewEntityRepository = courseReviewRepository;
     }
 
+    // 코스리뷰 등록
     @Override
-    public Long createCourseReviews(CreateCourseReviewRequest createCourseReviewRequest) {
-        CourseReviewEntity courseReview = dtoToEntity(createCourseReviewRequest);
+    public CourseReview createCourseReviews(CreateCourseReviewRequest createCourseReviewRequest) {
+
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+        Long id = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
+        CourseReviewEntity courseReview = CourseReviewEntity.builder()
+                .courseId(createCourseReviewRequest.getCourseId())
+                .reviewerId(id)
+                .courseReviewContent(createCourseReviewRequest.getCourseReviewContent())
+                .rate(createCourseReviewRequest.getRate())
+                .courseReviewStatus(CourseReviewStatus.ACTIVE)
+                .build();
+
         courseReviewEntityRepository.save(courseReview);
-        return courseReview.getCourseId();
+
+        return CourseReview.builder()
+                .id(id)
+                .courseId(courseReview.getCourseId())
+                .reviewerId(courseReview.getReviewerId())
+                .courseReviewContent(courseReview.getCourseReviewContent())
+                .courseReviewStatus(courseReview.getCourseReviewStatus())
+                .rate(courseReview.getRate())
+                .build();
     }
 
     @Override
     public List<CourseReview> readMyCourseReviews() {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long id = Long.parseLong(request.getHeader("Authorization"));
+        String token = request.getHeader("Authorization");
+        Long reviewerId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByReviewerId(id);
+        try {
+            List<CourseReviewEntity> reviewEntityList = (courseReviewEntityRepository.findAllByReviewerId(reviewerId));
 
-        return reviewEntityList.stream().map(courseReview ->
-                new CourseReview(courseReview)).collect(Collectors.toList());
+            return reviewEntityList.stream().map(courseReview ->
+                    new CourseReview(courseReview)).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new WriteReviewNotFoundException();
+        }
     }
 
     @Override
     public List<CourseDetailReviewView> readCourseDetailReviews() {
+
         int totalPerson;
         double rateOneCnt = 0;
         double rateTwoCnt = 0;
@@ -60,7 +99,7 @@ public class CourseReviewServiceImpl implements CourseReviewService {
 
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
-        Long courseId = Long.parseLong(request.getHeader("Authorization")); // 코스 아이디가 들어 옴.
+        Long courseId = Long.parseLong(request.getHeader("Authorization")); // 코스 아이디
 
         // 코스 아이디를 입력 받아서 찾는다.
         List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByCourseId(courseId);
@@ -73,69 +112,94 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                 new CourseReview(courseReviewEntity)).collect(Collectors.toList()
         );
 
-        for (int i = 0; i < courseReviewEntityList.size(); i++) {
-            totalPerson = courseReviewEntityList.size();
+        try {
+            for (int i = 0; i < courseReviewEntityList.size(); i++) {
+                totalPerson = courseReviewEntityList.size();
 
-            if (courseReviewEntityList.get(i).getRate() == 1) {
-                rateOneCnt++;
-                rateAllTypeList[0] = 0;
-                rateAllTypeList[0] += (Math.round((rateOneCnt / totalPerson) * 100)) / 1.0;
-            } else if (courseReviewEntityList.get(i).getRate() == 2) {
-                rateTwoCnt++;
-                rateAllTypeList[1] = 0;
-                rateAllTypeList[1] += (Math.round((rateTwoCnt / totalPerson) * 100)) / 1.0;
-            } else if (courseReviewEntityList.get(i).getRate() == 3) {
-                rateThreeCnt++;
-                rateAllTypeList[2] = 0;
-                rateAllTypeList[2] += (Math.round((rateThreeCnt / totalPerson) * 100)) / 1.0;
-            } else if (courseReviewEntityList.get(i).getRate() == 4) {
-                rateFourCnt++;
-                rateAllTypeList[3] = 0;
-                rateAllTypeList[3] += (Math.round((rateFourCnt / totalPerson) * 100)) / 1.0;
-            } else {
-                rateFiveCnt++;
-                rateAllTypeList[4] = 0;
-                rateAllTypeList[4] += (Math.round((rateFiveCnt / totalPerson) * 100)) / 1.0;
+                if (courseReviewEntityList.get(i).getRate() == 1) {
+                    rateOneCnt++;
+                    rateAllTypeList[0] = 0;
+                    rateAllTypeList[0] += (Math.round((rateOneCnt / totalPerson) * 100)) / 1.0;
+                } else if (courseReviewEntityList.get(i).getRate() == 2) {
+                    rateTwoCnt++;
+                    rateAllTypeList[1] = 0;
+                    rateAllTypeList[1] += (Math.round((rateTwoCnt / totalPerson) * 100)) / 1.0;
+                } else if (courseReviewEntityList.get(i).getRate() == 3) {
+                    rateThreeCnt++;
+                    rateAllTypeList[2] = 0;
+                    rateAllTypeList[2] += (Math.round((rateThreeCnt / totalPerson) * 100)) / 1.0;
+                } else if (courseReviewEntityList.get(i).getRate() == 4) {
+                    rateFourCnt++;
+                    rateAllTypeList[3] = 0;
+                    rateAllTypeList[3] += (Math.round((rateFourCnt / totalPerson) * 100)) / 1.0;
+                } else {
+                    rateFiveCnt++;
+                    rateAllTypeList[4] = 0;
+                    rateAllTypeList[4] += (Math.round((rateFiveCnt / totalPerson) * 100)) / 1.0;
+                }
             }
+
+            readPlaceDetailResponseList.add(
+                    CourseDetailReviewView.builder()
+                            .courseId(reviewEntityList.get(0).getCourseId())
+                            .courseReviewCnt((long) courseReviewEntityList.size())
+                            .rateAllTypeList(new String[]{Arrays.toString(rateAllTypeList)})
+                            .courseReviewList(courseReviewEntityList)
+                            .build());
+
+            return readPlaceDetailResponseList;
+
+        } catch (Exception e) {
+            throw new CourseNotFoundException();
         }
 
-        readPlaceDetailResponseList.add(
-                CourseDetailReviewView.builder()
-                        .courseId(reviewEntityList.get(0).getCourseId())
-                        .courseReviewCnt((long) courseReviewEntityList.size())
-                        .rateAllTypeList(new String[]{Arrays.toString(rateAllTypeList)})
-                        .courseReviewList(courseReviewEntityList)
-                        .build());
-
-        return readPlaceDetailResponseList;
     }
 
     @Override
     public void updateCourseReviews(Long id, UpdateCourseReviewRequest updateCourseReviewRequest) {
+
+
+
         courseReviewUpdate(id, updateCourseReviewRequest);
     }
 
     @Override
-    public void deleteCourseReview(Long id) {
+    public void deleteCourseReview(Long courseId) {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+        Long reviewerId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        Optional<CourseReviewEntity> reviewerId =
-                Optional.ofNullable(courseReviewEntityRepository.findById(id)
-                        .orElseThrow(CourseReviewIdNotFoundException::new));
+        try {
+            Optional<List<CourseReviewEntity>> courseReview =
+                    Optional.ofNullable(Optional.ofNullable(courseReviewEntityRepository.findByReviewerIdAndCourseId(reviewerId, courseId))
+                            .orElseThrow(CourseReviewIdNotFoundException::new));
 
-        if (reviewerId.isPresent()) {
-            courseReviewEntityRepository.deleteById(id);
+            if (courseReview.isPresent()) {
+                courseReviewEntityRepository.deleteById(courseReview.get().get(0).getId());
+            }
+        } catch (Exception e) {
+            throw new CourseReviewIdNotFoundException();
         }
+
     }
 
-    private CourseReviewEntity courseReviewUpdate(Long id, UpdateCourseReviewRequest updateCourseReviewRequest) {
-        Optional<CourseReviewEntity> courseReview = Optional.ofNullable(courseReviewEntityRepository.findById(id)
-                .orElseThrow(CourseReviewIdNotFoundException::new));
+    private CourseReviewEntity courseReviewUpdate(Long courseId, UpdateCourseReviewRequest updateCourseReviewRequest) {
+        HttpServletRequest request = ((ServletRequestAttributes)
+                RequestContextHolder.currentRequestAttributes()).getRequest();
+        String token = request.getHeader("Authorization");
+        Long reviewerId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+
+        Optional<List<CourseReviewEntity>> courseReview =
+                Optional.ofNullable(Optional.ofNullable(courseReviewEntityRepository.findByReviewerIdAndCourseId(reviewerId, courseId))
+                        .orElseThrow(CourseReviewIdNotFoundException::new));
 
         if (courseReview.isPresent()) {
             return courseReviewEntityRepository.save(CourseReviewEntity.builder()
-                    .id(id)
-                    .courseId(updateCourseReviewRequest.getCourseId())
-                    .reviewerId(courseReview.get().getReviewerId())
+                    .id(courseReview.get().get(0).getId())
+                    .courseId(courseReview.get().get(0).getCourseId())
+                    .reviewerId(reviewerId)
+                    .courseReviewStatus(CourseReviewStatus.ACTIVE)
                     .courseReviewContent(updateCourseReviewRequest.getCourseReviewContent())
                     .rate(updateCourseReviewRequest.getRate())
                     .build());

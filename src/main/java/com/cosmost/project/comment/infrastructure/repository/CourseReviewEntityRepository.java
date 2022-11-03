@@ -15,7 +15,10 @@ import java.util.Optional;
 public interface CourseReviewEntityRepository extends JpaRepository<CourseReviewEntity, Long> {
 
     List<CourseReviewEntity> findAllByReviewerId(Long reviewerId);
+
     List<CourseReviewEntity> findAllByCourseId(Long courseId);
+
+    List<CourseReviewEntity> findByReviewerIdAndCourseId(Long reviewerId, Long courseId);
     List<CourseReviewEntity> findByCourseId(Long cousreId);
 
     @Query(value = "select c from CourseReviewEntity c " +

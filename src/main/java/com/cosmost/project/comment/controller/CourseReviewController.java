@@ -45,10 +45,10 @@ public class CourseReviewController {
     @PostMapping("")
     public ResponseEntity<String> createCourseReviews(@Valid @RequestBody CreateCourseReviewRequest createCourseReviewRequest) {
 
-        if(createCourseReviewRequest.getType().equals("courseReview")){
+        if (createCourseReviewRequest.getType().equals("courseReview")) {
             courseReviewService.createCourseReviews(createCourseReviewRequest);
             return ResponseEntity.ok("리뷰가 등록되었습니다.");
-        } else if(createCourseReviewRequest.getType().equals("reportAnswer")){
+        } else if (createCourseReviewRequest.getType().equals("reportAnswer")) {
             reportAnswerService.createReportAnswers(createCourseReviewRequest);
             return ResponseEntity.ok("신고답변이 등록되었습니다.");
         }
@@ -60,12 +60,14 @@ public class CourseReviewController {
     // 코스리뷰 상세페이지 조회
     @GetMapping("")
     public ResponseEntity<?> readCourseReviews(@RequestParam(value = "filter", required = false) String filter,
-                                                                @RequestParam(value = "type", required = false) String type) {
+                                               @RequestParam(value = "type", required = false) String type) {
 
-        if(String.valueOf(filter).equals("auth") && type.equals("review")) {
+        if (String.valueOf(filter).equals("auth") && type.equals("review")) {
             return ResponseEntity.status(200).body(courseReviewService.readMyCourseReviews());
-        } else if(type.equals("review")){
+        } else if (type.equals("review")) {
             return ResponseEntity.status(200).body(courseReviewService.readCourseDetailReviews());
+        } else if (filter.equals("auth") && type.equals("answer")) {
+//            return ResponseEntity.status(200).body(reportAnswerService.);
         }
         throw new CourseParamNotFoundException();
     }
@@ -74,13 +76,13 @@ public class CourseReviewController {
     @PutMapping("/{id}")
     public ResponseEntity<String> updateCourseReviews(@PathVariable Long id,
                                                       @Valid @RequestBody UpdateCourseReviewRequest request) {
-        courseReviewService.updateCourseReviews(id,request);
+        courseReviewService.updateCourseReviews(id, request);
         return ResponseEntity.ok("리뷰가 수정되었습니다.");
     }
-    
+
     // 코스리뷰 삭제
     @DeleteMapping("/{id}/review")
-    public ResponseEntity<String>  deleteCourseReview(@PathVariable Long id){
+    public ResponseEntity<String> deleteCourseReview(@PathVariable Long id) {
         courseReviewService.deleteCourseReview(id);
 
         return ResponseEntity.ok("리뷰가 삭제되었습니다.");

@@ -143,7 +143,7 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                     CourseDetailReviewView.builder()
                             .courseId(reviewEntityList.get(0).getCourseId())
                             .courseReviewCnt((long) courseReviewEntityList.size())
-                            .rateAllTypeList(new String[]{Arrays.toString(rateAllTypeList)})
+                            .rateAllTypeList(rateAllTypeList)
                             .courseReviewList(courseReviewEntityList)
                             .build());
 

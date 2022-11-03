@@ -4,9 +4,12 @@ import com.cosmost.project.comment.exception.CourseNotFoundException;
 import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
 import com.cosmost.project.comment.infrastructure.repository.CourseReviewEntityRepository;
 import com.cosmost.project.comment.model.CourseReview;
+import com.cosmost.project.comment.responsebody.ReadCourseAverageRateAllResponse;
 import com.cosmost.project.comment.view.ViewCourseRate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -59,5 +62,21 @@ public class ViewCourseReviewServiceImpl implements ViewCourseReviewService {
         }
     }
 
+    @Override
+    public List<ReadCourseAverageRateAllResponse> readRankingCourseAverageRateAll(Pageable pageable) {
 
+        Slice<CourseReviewEntity> courseReviewEntitySlice = courseReviewEntityRepository.CourseAverageRateSort(pageable);
+        List<Float> courseAverageNumList = courseReviewEntityRepository.CourseAverageRate(pageable);
+        List<ReadCourseAverageRateAllResponse> courseAverageRateList = new ArrayList<>();
+
+        for(int i=0; i<courseReviewEntitySlice.getContent().size(); i++) {
+            courseAverageRateList.add(ReadCourseAverageRateAllResponse.builder()
+                    .courseId(courseReviewEntitySlice.getContent().get(i).getCourseId())
+                    .CourseAvgRate(Math.round(courseAverageNumList.get(i).floatValue()*10)/10.0)
+                    .whetherLastPage(courseReviewEntitySlice.isLast())
+                    .build());
+        }
+
+        return courseAverageRateList;
+    }
 }

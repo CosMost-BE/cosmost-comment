@@ -125,9 +125,6 @@ public class CourseReviewServiceImpl implements CourseReviewService {
 
         float[] rateAllTypeList = new float[5];
 
-//        courseReviewEntitySlice.stream().map(courseReviewEntity ->
-//                new CourseReview(courseReviewEntity)).collect(Collectors.toList()
-//        );
 
         try {
             for (int i = 0; i < rateAllType.size(); i++) {

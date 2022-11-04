@@ -1,5 +1,6 @@
 package com.cosmost.project.comment.model;
 
+import com.cosmost.project.comment.infrastructure.entity.ReportAnswerEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,11 +20,11 @@ public class ReportAnswer {
 
     private String reportContent;
 
-    public ReportAnswer(ReportAnswer reportAnswer) {
-        this.reportId = reportAnswer.getReportId();
-        this.answerPersonId = reportAnswer.getAnswerPersonId();
-        this.reportTitle = reportAnswer.getReportTitle();
-        this.reportContent = reportAnswer.getReportContent();
+    public ReportAnswer(ReportAnswerEntity entity) {
+        this.reportId = entity.getReportId();
+        this.answerPersonId = entity.getAnswerPersonId();
+        this.reportTitle = entity.getReportTitle();
+        this.reportContent = entity.getReportContent();
     }
 
 }

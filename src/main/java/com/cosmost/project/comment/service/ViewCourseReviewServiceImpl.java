@@ -65,18 +65,17 @@ public class ViewCourseReviewServiceImpl implements ViewCourseReviewService {
     @Override
     public List<ReadCourseAverageRateAllResponse> readRankingCourseAverageRateAll(Pageable pageable) {
 
-        Slice<CourseReviewEntity> courseReviewEntitySlice = courseReviewEntityRepository.CourseAverageRateSort(pageable);
-        List<Float> courseAverageNumList = courseReviewEntityRepository.CourseAverageRate(pageable);
+        Slice<Long> courseReviewEntitySlice = courseReviewEntityRepository.CourseAverageRateSortId(pageable);
+        Slice<Double> courseAverageNumList = courseReviewEntityRepository.CourseAverageRate(pageable);
         List<ReadCourseAverageRateAllResponse> courseAverageRateList = new ArrayList<>();
 
         for(int i=0; i<courseReviewEntitySlice.getContent().size(); i++) {
             courseAverageRateList.add(ReadCourseAverageRateAllResponse.builder()
-                    .courseId(courseReviewEntitySlice.getContent().get(i).getCourseId())
-                    .CourseAvgRate(Math.round(courseAverageNumList.get(i).floatValue()*10)/10.0)
+                    .courseId(courseReviewEntitySlice.getContent().get(i).longValue())
+                    .CourseAvgRate(Math.round(courseAverageNumList.getContent().get(i).doubleValue()*10)/10.0)
                     .whetherLastPage(courseReviewEntitySlice.isLast())
                     .build());
         }
-
         return courseAverageRateList;
     }
 }

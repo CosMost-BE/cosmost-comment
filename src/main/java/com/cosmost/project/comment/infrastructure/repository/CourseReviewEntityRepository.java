@@ -23,11 +23,11 @@ public interface CourseReviewEntityRepository extends JpaRepository<CourseReview
 
     Slice<CourseReviewEntity> findByCourseId(Long cousreId, Pageable pageable);
 
-    @Query(value = "select c from CourseReviewEntity c " +
+    @Query(value = "select c.courseId from CourseReviewEntity c " +
             "group by c.courseId order by avg(c.rate) desc")
-    Slice<CourseReviewEntity> CourseAverageRateSort(Pageable pageable);
+    Slice<Long> CourseAverageRateSortId(Pageable pageable);
 
     @Query(value = "select avg(c.rate) from CourseReviewEntity c " +
             "group by c.courseId order by avg(c.rate) desc")
-    List<Float> CourseAverageRate(Pageable pageable);
+    Slice<Double> CourseAverageRate(Pageable pageable);
 }

@@ -67,6 +67,7 @@ public class CourseReviewController {
         } else if (type.equals("review")) {
             return ResponseEntity.status(200).body(courseReviewService.readCourseDetailReviews(pageable));
         } else if (filter.equals("auth") && type.equals("answer")) {
+            return ResponseEntity.ok().body(reportAnswerService.readMyReport());
         }
         throw new CourseParamNotFoundException();
     }

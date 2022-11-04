@@ -9,22 +9,24 @@ import com.cosmost.project.comment.infrastructure.repository.CourseReviewEntityR
 import com.cosmost.project.comment.model.CourseReview;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
+import com.cosmost.project.comment.responsebody.ReadCourseDetailReviewAllResponse;
+import com.cosmost.project.comment.responsebody.ReadMyCourseReviewsResponse;
 import com.cosmost.project.comment.view.CourseDetailReviewView;
 import io.jsonwebtoken.Jwts;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -71,24 +73,37 @@ public class CourseReviewServiceImpl implements CourseReviewService {
     }
 
     @Override
-    public List<CourseReview> readMyCourseReviews() {
+    public List<ReadMyCourseReviewsResponse> readMyCourseReviews(Pageable pageable) {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
         Long reviewerId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
         try {
-            List<CourseReviewEntity> reviewEntityList = (courseReviewEntityRepository.findAllByReviewerId(reviewerId));
+            Slice<CourseReviewEntity> reviewEntityList = (courseReviewEntityRepository.findAllByReviewerId(reviewerId, pageable));
+            List<ReadMyCourseReviewsResponse> myCourseReviewsResponseList = new ArrayList<>();
 
-            return reviewEntityList.stream().map(courseReview ->
-                    new CourseReview(courseReview)).collect(Collectors.toList());
+            reviewEntityList.forEach(courseReviewEntity -> {
+                myCourseReviewsResponseList.add(ReadMyCourseReviewsResponse.builder()
+                        .id(courseReviewEntity.getId())
+                        .courseId(courseReviewEntity.getCourseId())
+                        .reviewerId(courseReviewEntity.getReviewerId())
+                        .courseReviewContent(courseReviewEntity.getCourseReviewContent())
+                        .courseReviewStatus(courseReviewEntity.getCourseReviewStatus())
+                        .rate(courseReviewEntity.getRate())
+                        .whetherLastPage(reviewEntityList.isLast())
+                        .build());
+            });
+
+            return myCourseReviewsResponseList;
+
         } catch (Exception e) {
             throw new WriteReviewNotFoundException();
         }
     }
 
     @Override
-    public List<CourseDetailReviewView> readCourseDetailReviews() {
+    public List<CourseDetailReviewView> readCourseDetailReviews(Pageable pageable) {
 
         int totalPerson;
         double rateOneCnt = 0;
@@ -104,31 +119,33 @@ public class CourseReviewServiceImpl implements CourseReviewService {
         // 코스 아이디를 입력 받아서 찾는다.
         List<CourseReviewEntity> reviewEntityList = courseReviewEntityRepository.findAllByCourseId(courseId);
         List<CourseDetailReviewView> readPlaceDetailResponseList = new ArrayList<>();
-        List<CourseReviewEntity> courseReviewEntityList = courseReviewEntityRepository.findByCourseId(courseId);
+        Slice<CourseReviewEntity> courseReviewEntitySlice = courseReviewEntityRepository.findByCourseId(courseId, pageable);
+        List<CourseReviewEntity> rateAllType = courseReviewEntityRepository.findByCourseId(courseId);
+        List<ReadCourseDetailReviewAllResponse> readCourseDetailReviewAllResponseList = new ArrayList<>();
 
         float[] rateAllTypeList = new float[5];
 
-        courseReviewEntityList.stream().map(courseReviewEntity ->
-                new CourseReview(courseReviewEntity)).collect(Collectors.toList()
-        );
+//        courseReviewEntitySlice.stream().map(courseReviewEntity ->
+//                new CourseReview(courseReviewEntity)).collect(Collectors.toList()
+//        );
 
         try {
-            for (int i = 0; i < courseReviewEntityList.size(); i++) {
-                totalPerson = courseReviewEntityList.size();
+            for (int i = 0; i < rateAllType.size(); i++) {
+                totalPerson = rateAllType.size();
 
-                if (courseReviewEntityList.get(i).getRate() == 1) {
+                if (rateAllType.get(i).getRate() == 1) {
                     rateOneCnt++;
                     rateAllTypeList[0] = 0;
                     rateAllTypeList[0] += (Math.round((rateOneCnt / totalPerson) * 100)) / 1.0;
-                } else if (courseReviewEntityList.get(i).getRate() == 2) {
+                } else if (rateAllType.get(i).getRate() == 2) {
                     rateTwoCnt++;
                     rateAllTypeList[1] = 0;
                     rateAllTypeList[1] += (Math.round((rateTwoCnt / totalPerson) * 100)) / 1.0;
-                } else if (courseReviewEntityList.get(i).getRate() == 3) {
+                } else if (rateAllType.get(i).getRate() == 3) {
                     rateThreeCnt++;
                     rateAllTypeList[2] = 0;
                     rateAllTypeList[2] += (Math.round((rateThreeCnt / totalPerson) * 100)) / 1.0;
-                } else if (courseReviewEntityList.get(i).getRate() == 4) {
+                } else if (rateAllType.get(i).getRate() == 4) {
                     rateFourCnt++;
                     rateAllTypeList[3] = 0;
                     rateAllTypeList[3] += (Math.round((rateFourCnt / totalPerson) * 100)) / 1.0;
@@ -139,12 +156,25 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                 }
             }
 
+
+            courseReviewEntitySlice.forEach(courseReviewEntity -> {
+                readCourseDetailReviewAllResponseList.add(ReadCourseDetailReviewAllResponse.builder()
+                        .id(courseReviewEntity.getId())
+                        .reviewerId(courseReviewEntity.getReviewerId())
+                        .courseReviewContent(courseReviewEntity.getCourseReviewContent())
+                        .courseReviewStatus(courseReviewEntity.getCourseReviewStatus())
+                        .rate(courseReviewEntity.getRate())
+                        .whetherLastPage(courseReviewEntitySlice.isLast())
+                        .build());
+            });
+
+
             readPlaceDetailResponseList.add(
                     CourseDetailReviewView.builder()
                             .courseId(reviewEntityList.get(0).getCourseId())
-                            .courseReviewCnt((long) courseReviewEntityList.size())
+                            .courseReviewCnt((long) rateAllType.size())
                             .rateAllTypeList(rateAllTypeList)
-                            .courseReviewList(courseReviewEntityList)
+                            .courseReviewList(readCourseDetailReviewAllResponseList)
                             .build());
 
             return readPlaceDetailResponseList;

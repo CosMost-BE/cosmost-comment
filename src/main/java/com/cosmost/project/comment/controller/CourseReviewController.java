@@ -1,7 +1,6 @@
 package com.cosmost.project.comment.controller;
 
 import com.cosmost.project.comment.exception.CourseParamNotFoundException;
-import com.cosmost.project.comment.model.CourseReview;
 import com.cosmost.project.comment.requestbody.CreateCourseReviewRequest;
 import com.cosmost.project.comment.requestbody.UpdateCourseReviewRequest;
 import com.cosmost.project.comment.service.CourseReviewService;
@@ -11,11 +10,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -60,14 +59,14 @@ public class CourseReviewController {
     // 코스리뷰 상세페이지 조회
     @GetMapping("")
     public ResponseEntity<?> readCourseReviews(@RequestParam(value = "filter", required = false) String filter,
-                                               @RequestParam(value = "type", required = false) String type) {
+                                               @RequestParam(value = "type", required = false) String type,
+                                               Pageable pageable) {
 
         if (String.valueOf(filter).equals("auth") && type.equals("review")) {
-            return ResponseEntity.status(200).body(courseReviewService.readMyCourseReviews());
+            return ResponseEntity.status(200).body(courseReviewService.readMyCourseReviews(pageable));
         } else if (type.equals("review")) {
-            return ResponseEntity.status(200).body(courseReviewService.readCourseDetailReviews());
+            return ResponseEntity.status(200).body(courseReviewService.readCourseDetailReviews(pageable));
         } else if (filter.equals("auth") && type.equals("answer")) {
-//            return ResponseEntity.status(200).body(reportAnswerService.);
         }
         throw new CourseParamNotFoundException();
     }

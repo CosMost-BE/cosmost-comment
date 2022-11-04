@@ -14,12 +14,14 @@ import java.util.Optional;
 @Repository
 public interface CourseReviewEntityRepository extends JpaRepository<CourseReviewEntity, Long> {
 
-    List<CourseReviewEntity> findAllByReviewerId(Long reviewerId);
+    Slice<CourseReviewEntity> findAllByReviewerId(Long reviewerId, Pageable pageable);
 
     List<CourseReviewEntity> findAllByCourseId(Long courseId);
 
     List<CourseReviewEntity> findByReviewerIdAndCourseId(Long reviewerId, Long courseId);
     List<CourseReviewEntity> findByCourseId(Long cousreId);
+
+    Slice<CourseReviewEntity> findByCourseId(Long cousreId, Pageable pageable);
 
     @Query(value = "select c from CourseReviewEntity c " +
             "group by c.courseId order by avg(c.rate) desc")

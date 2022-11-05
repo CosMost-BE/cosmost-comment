@@ -175,7 +175,6 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                             .build());
 
             return readPlaceDetailResponseList;
-
         } catch (Exception e) {
             throw new CourseNotFoundException();
         }
@@ -184,9 +183,6 @@ public class CourseReviewServiceImpl implements CourseReviewService {
 
     @Override
     public void updateCourseReviews(Long id, UpdateCourseReviewRequest updateCourseReviewRequest) {
-
-
-
         courseReviewUpdate(id, updateCourseReviewRequest);
     }
 

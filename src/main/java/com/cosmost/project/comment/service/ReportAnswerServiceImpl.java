@@ -51,8 +51,7 @@ public class ReportAnswerServiceImpl implements ReportAnswerService {
     public ReportAnswer readMyReport() {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
-        String token = request.getHeader("Authorization");
-        Long reporterId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+        Long reporterId = Long.valueOf(request.getHeader("Authorization"));
 
         Optional<ReportAnswer> reportAnswer =
                 Optional.ofNullable(reportAnswerEntityRepository.findByReportId(reporterId));

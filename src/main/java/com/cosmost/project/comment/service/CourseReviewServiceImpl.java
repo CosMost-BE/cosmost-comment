@@ -94,6 +94,7 @@ public class CourseReviewServiceImpl implements CourseReviewService {
             reviewEntityList.forEach(courseReviewEntity -> {
                 myCourseReviewsResponseList.add(ReadMyCourseReviewsResponse.builder()
                         .id(courseReviewEntity.getId())
+                        .createdAt(courseReviewEntity.getCreatedAt())
                         .courseId(courseReviewEntity.getCourseId())
                         .reviewerId(courseReviewEntity.getReviewerId())
                         .courseReviewContent(courseReviewEntity.getCourseReviewContent())
@@ -165,6 +166,7 @@ public class CourseReviewServiceImpl implements CourseReviewService {
             courseReviewEntitySlice.forEach(courseReviewEntity -> {
                 readCourseDetailReviewAllResponseList.add(ReadCourseDetailReviewAllResponse.builder()
                         .id(courseReviewEntity.getId())
+                        .createdAt(courseReviewEntity.getCreatedAt())
                         .reviewerId(courseReviewEntity.getReviewerId())
                         .courseReviewContent(courseReviewEntity.getCourseReviewContent())
                         .courseReviewStatus(courseReviewEntity.getCourseReviewStatus())

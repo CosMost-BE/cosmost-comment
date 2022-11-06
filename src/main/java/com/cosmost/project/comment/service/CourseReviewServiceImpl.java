@@ -217,10 +217,13 @@ public class CourseReviewServiceImpl implements CourseReviewService {
                 Optional.ofNullable(Optional.ofNullable(courseReviewEntityRepository.findByReviewerIdAndCourseId(reviewerId, courseId))
                         .orElseThrow(CourseReviewIdNotFoundException::new));
 
+
         if (courseReview.isPresent()) {
             return courseReviewEntityRepository.save(CourseReviewEntity.builder()
                     .id(courseReview.get().get(0).getId())
                     .courseId(courseReview.get().get(0).getCourseId())
+                    .createdAt(courseReview.get().get(0).getCreatedAt())
+                    .updatedAt(courseReview.get().get(0).getUpdatedAt())
                     .reviewerId(reviewerId)
                     .courseReviewStatus(CourseReviewStatus.ACTIVE)
                     .courseReviewContent(updateCourseReviewRequest.getCourseReviewContent())

@@ -2,6 +2,7 @@ package com.cosmost.project.comment.service;
 
 import com.cosmost.project.comment.exception.CourseNotFoundException;
 import com.cosmost.project.comment.exception.CourseReviewIdNotFoundException;
+import com.cosmost.project.comment.exception.DupulicateCourseReviewException;
 import com.cosmost.project.comment.exception.WriteReviewNotFoundException;
 import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
 import com.cosmost.project.comment.infrastructure.entity.CourseReviewStatus;
@@ -52,24 +53,31 @@ public class CourseReviewServiceImpl implements CourseReviewService {
         String token = request.getHeader("Authorization");
         Long id = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        CourseReviewEntity courseReview = CourseReviewEntity.builder()
-                .courseId(createCourseReviewRequest.getCourseId())
-                .reviewerId(id)
-                .courseReviewContent(createCourseReviewRequest.getCourseReviewContent())
-                .rate(createCourseReviewRequest.getRate())
-                .courseReviewStatus(CourseReviewStatus.ACTIVE)
-                .build();
+        List<CourseReviewEntity> courseReviewId = courseReviewEntityRepository.findByCourseId(createCourseReviewRequest.getCourseId());
 
-        courseReviewEntityRepository.save(courseReview);
+        if(courseReviewId.isEmpty()){
 
-        return CourseReview.builder()
-                .id(id)
-                .courseId(courseReview.getCourseId())
-                .reviewerId(courseReview.getReviewerId())
-                .courseReviewContent(courseReview.getCourseReviewContent())
-                .courseReviewStatus(courseReview.getCourseReviewStatus())
-                .rate(courseReview.getRate())
-                .build();
+            CourseReviewEntity courseReview = CourseReviewEntity.builder()
+                    .courseId(createCourseReviewRequest.getCourseId())
+                    .reviewerId(id)
+                    .courseReviewContent(createCourseReviewRequest.getCourseReviewContent())
+                    .rate(createCourseReviewRequest.getRate())
+                    .courseReviewStatus(CourseReviewStatus.ACTIVE)
+                    .build();
+
+            courseReviewEntityRepository.save(courseReview);
+
+            return CourseReview.builder()
+                    .id(id)
+                    .courseId(courseReview.getCourseId())
+                    .reviewerId(courseReview.getReviewerId())
+                    .courseReviewContent(courseReview.getCourseReviewContent())
+                    .courseReviewStatus(courseReview.getCourseReviewStatus())
+                    .rate(courseReview.getRate())
+                    .build();
+        } else {
+            throw new DupulicateCourseReviewException();
+        }
     }
 
     @Override
@@ -188,6 +196,7 @@ public class CourseReviewServiceImpl implements CourseReviewService {
 
     @Override
     public void deleteCourseReview(Long courseId) {
+
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
@@ -201,6 +210,7 @@ public class CourseReviewServiceImpl implements CourseReviewService {
             if (courseReview.isPresent()) {
                 courseReviewEntityRepository.deleteById(courseReview.get().get(0).getId());
             }
+
         } catch (Exception e) {
             throw new CourseReviewIdNotFoundException();
         }

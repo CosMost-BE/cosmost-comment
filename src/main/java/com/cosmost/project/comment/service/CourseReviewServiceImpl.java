@@ -51,15 +51,15 @@ public class CourseReviewServiceImpl implements CourseReviewService {
         HttpServletRequest request = ((ServletRequestAttributes)
                 RequestContextHolder.currentRequestAttributes()).getRequest();
         String token = request.getHeader("Authorization");
-        Long id = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
+        Long reviewerId = Long.parseLong(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject());
 
-        List<CourseReviewEntity> courseReviewId = courseReviewEntityRepository.findByCourseId(createCourseReviewRequest.getCourseId());
+        List<CourseReviewEntity> courseId = courseReviewEntityRepository.findByCourseIdAndReviewerId(createCourseReviewRequest.getCourseId(), reviewerId);
 
-        if(courseReviewId.isEmpty()){
+        if(courseId.isEmpty()){
 
             CourseReviewEntity courseReview = CourseReviewEntity.builder()
                     .courseId(createCourseReviewRequest.getCourseId())
-                    .reviewerId(id)
+                    .reviewerId(reviewerId)
                     .courseReviewContent(createCourseReviewRequest.getCourseReviewContent())
                     .rate(createCourseReviewRequest.getRate())
                     .courseReviewStatus(CourseReviewStatus.ACTIVE)
@@ -68,7 +68,7 @@ public class CourseReviewServiceImpl implements CourseReviewService {
             courseReviewEntityRepository.save(courseReview);
 
             return CourseReview.builder()
-                    .id(id)
+                    .id(reviewerId)
                     .courseId(courseReview.getCourseId())
                     .reviewerId(courseReview.getReviewerId())
                     .courseReviewContent(courseReview.getCourseReviewContent())

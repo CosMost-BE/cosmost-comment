@@ -30,4 +30,6 @@ public interface CourseReviewEntityRepository extends JpaRepository<CourseReview
     @Query(value = "select avg(c.rate) from CourseReviewEntity c " +
             "where c.courseId = :id")
     double CourseIdAverageRate(Long id);
+
+    List<CourseReviewEntity> findByCourseIdAndReviewerId(Long courseId, Long reviewerId);
 }

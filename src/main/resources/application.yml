@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 9003
 
 spring:
   datasource:
@@ -20,13 +20,13 @@ spring:
   profiles:
     include: localdb
 
-eureka:
-  instance:
-    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
+management:
+  endpoint.health.probes.enabled: true
+  health:
+    livenessState.enabled: true
+    readinessState.enabled: true
 
+jwt:
+  tokenValidTime: 1800000
+  secret: COS-MOST-TEAM-SECRET-KEY
 

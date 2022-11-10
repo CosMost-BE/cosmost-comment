@@ -33,22 +33,17 @@ public class ViewCourseReviewController {
     public ResponseEntity<List<ViewCourseRate>> read(@RequestParam(value = "rate", defaultValue = " ", required = false) String rate,
                                                      @RequestParam(value = "course", defaultValue = " ", required = false) Long course) {
 
-        if(rate.equals("average") && !(course.equals(" "))) {
+        if (rate.equals("average") && !(course.equals(" "))) {
             return ResponseEntity.ok().body(viewCourseReviewService.readCourseAvg(course));
         }
 
         throw new CourseParamNotFoundException();
     }
 
-    @GetMapping("/view/ranking")
-    public ResponseEntity<List<ReadCourseAverageRateAllResponse>> readRankingCourseAverageRateAll(@RequestParam(value = "order", defaultValue = " ", required = false) String order,
-                                                                                                  Pageable pageable) {
+    @GetMapping("/view/ranking/rate")
+    public ResponseEntity<List<ReadCourseAverageRateAllResponse>> readRankingCourseAverageRateAll(Pageable pageable) {
+        return ResponseEntity.ok().body(viewCourseReviewService.readRankingCourseAverageRateAll(pageable));
 
-        if(order.equals("rate")) {
-            return ResponseEntity.ok().body(viewCourseReviewService.readRankingCourseAverageRateAll(pageable));
-        }
-
-        throw new CourseParamNotFoundException();
     }
 
 

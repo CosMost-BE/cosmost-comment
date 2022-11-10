@@ -1,11 +1,4 @@
-ARG JAR_FILE=build/libs/*jar
-
 FROM openjdk:17-ea-11-jdk-slim
 EXPOSE 9003
-ENV TZ Asia/Seoul
-COPY ./ ./
-RUN chmod 755 gradlew
-RUN ./gradlew build -x test
-
-COPY  ${JAR_FIlE} CommentService.jar
+COPY build/libs/cosmost-comment-1.0.jar CommentService.jar
 ENTRYPOINT ["java", "-jar", "CommentService.jar"]

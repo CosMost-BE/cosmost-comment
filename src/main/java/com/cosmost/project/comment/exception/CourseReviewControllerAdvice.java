@@ -42,6 +42,16 @@ public class CourseReviewControllerAdvice {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
+    @ExceptionHandler(ReportAnswerNotFoundException.class)
+    public ResponseEntity<String> ReportAnswerNotFoundException(ReportAnswerNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(DupulicateCourseReviewException.class)
+    public ResponseEntity<String> DupulicateCourseReviewException(DupulicateCourseReviewException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
 
 
 }

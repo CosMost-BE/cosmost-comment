@@ -1,10 +1,12 @@
 package com.cosmost.project.comment.view;
 
 import com.cosmost.project.comment.infrastructure.entity.CourseReviewEntity;
+import com.cosmost.project.comment.responsebody.ReadCourseAverageRateAllResponse;
+import com.cosmost.project.comment.responsebody.ReadCourseDetailReviewAllResponse;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.springframework.data.domain.Slice;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -17,7 +19,7 @@ public class CourseDetailReviewView {
     private Long courseId;
     private Long courseReviewCnt;
 
-    String[] rateAllTypeList;
-    List<CourseReviewEntity> courseReviewList;
+    float[] rateAllTypeList;
+    List<ReadCourseDetailReviewAllResponse> courseReviewList;
 
 }
